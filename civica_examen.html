@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Educación Cívica – Resumen & Práctica</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --card: #1c2128;
+    --border: #30363d;
+    --accent: #e6ac2e;
+    --accent2: #3fb68b;
+    --accent3: #e05c5c;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Source Sans 3', sans-serif; font-size: 15px; line-height: 1.7; }
+
+  /* NAV TABS */
+  .tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+  .tab { flex: 1; padding: 14px 8px; text-align: center; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--muted); border-bottom: 3px solid transparent; transition: all .25s; letter-spacing: .5px; text-transform: uppercase; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* PAGES */
+  .page { display: none; padding: 24px 16px 60px; max-width: 800px; margin: 0 auto; }
+  .page.active { display: block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+  /* HEADER */
+  .hero { text-align: center; padding: 36px 0 28px; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--accent); line-height: 1.2; }
+  .hero p { color: var(--muted); margin-top: 8px; font-size: 14px; }
+  .exam-badge { display: inline-block; background: var(--accent3); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-top: 10px; letter-spacing: 1px; }
+
+  /* SECTION TITLES */
+  .section-title { font-family: 'Playfair Display', serif; font-size: 1.35rem; color: var(--accent); margin: 32px 0 14px; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* DEFINITION CARDS */
+  .def-card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 12px; transition: transform .2s; }
+  .def-card:hover { transform: translateX(3px); }
+  .def-card h3 { color: var(--accent); font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .def-card p { color: #c9d1d9; font-size: 14px; }
+  .def-card .example { margin-top: 8px; font-size: 13px; color: var(--accent2); font-style: italic; }
+
+  /* TWO-COL GRID */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width:560px){ .grid2 { grid-template-columns:1fr; } }
+
+  /* TABLE */
+  .nice-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 4px; }
+  .nice-table th { background: var(--accent); color: #0d1117; padding: 10px 12px; text-align: left; font-weight: 700; }
+  .nice-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .nice-table tr:nth-child(even) td { background: #1e2530; }
+  .nice-table .gen { font-weight: 700; color: var(--accent); }
+
+  /* BULLET LIST */
+  .blist { list-style: none; padding: 0; }
+  .blist li { padding: 6px 0 6px 20px; position: relative; color: #c9d1d9; font-size: 14px; }
+  .blist li::before { content: '▸'; color: var(--accent2); position: absolute; left: 0; }
+
+  /* PYRAMID */
+  .pyramid { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 18px 0; }
+  .pyr-level { border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; text-align: center; padding: 10px 16px; color: #0d1117; }
+
+  /* HIGHLIGHT BOX */
+  .hbox { background: #1a2a1a; border: 1px solid var(--accent2); border-radius: var(--radius); padding: 14px 18px; margin-top: 12px; }
+  .hbox-title { color: var(--accent2); font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+
+  /* ── QUIZ ── */
+  #quiz-page .hero h1 { font-size: 1.8rem; }
+  .progress-bar { background: var(--border); border-radius: 20px; height: 8px; margin: 20px 0; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 20px; transition: width .4s ease; }
+  .q-counter { text-align: right; color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+  .question-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; }
+  .question-text { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--text); margin-bottom: 18px; line-height: 1.5; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn { background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; padding: 12px 16px; text-align: left; color: var(--text); cursor: pointer; font-size: 14px; transition: all .2s; font-family: 'Source Sans 3', sans-serif; }
+  .option-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: #1e1a0f; }
+  .option-btn.correct { background: #0f2a1a; border-color: var(--accent2); color: var(--accent2); }
+  .option-btn.wrong { background: #2a0f0f; border-color: var(--accent3); color: var(--accent3); }
+  .option-btn:disabled { cursor: default; }
+  .feedback { margin-top: 14px; padding: 12px 16px; border-radius: 8px; font-size: 14px; display: none; }
+  .feedback.correct { background: #0f2a1a; border: 1px solid var(--accent2); color: var(--accent2); display: block; }
+  .feedback.wrong { background: #2a0f0f; border: 1px solid var(--accent3); color: #ffaaaa; display: block; }
+  .next-btn { margin-top: 18px; background: var(--accent); color: #0d1117; border: none; border-radius: 8px; padding: 12px 28px; font-size: 15px; font-weight: 700; cursor: pointer; display: none; font-family: 'Source Sans 3', sans-serif; transition: opacity .2s; width: 100%; }
+  .next-btn:hover { opacity: .88; }
+  .score-card { text-align: center; padding: 40px 20px; background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); display: none; }
+  .score-big { font-family: 'Playfair Display', serif; font-size: 4rem; color: var(--accent); }
+  .score-label { color: var(--muted); margin-top: 6px; font-size: 15px; }
+  .score-msg { font-size: 1.2rem; color: var(--accent2); margin-top: 14px; font-weight: 600; }
+  .restart-btn { margin-top: 22px; background: var(--surface); border: 1.5px solid var(--accent); color: var(--accent); border-radius: 8px; padding: 11px 28px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Source Sans 3', sans-serif; }
+</style>
+</head>
+<body>
+
+<div class="tabs">
+  <div class="tab active" onclick="showPage('summary')">📚 Resumen</div>
+  <div class="tab" onclick="showPage('quiz')">✏️ Práctica</div>
+</div>
+
+<!-- ═══════════════ SUMMARY PAGE ═══════════════ -->
+<div id="summary" class="page active">
+  <div class="hero">
+    <h1>Educación Cívica</h1>
+    <p>Duodécimo · Prof. Hilda Cortés S.</p>
+    <span class="exam-badge">📅 EXAMEN LUNES 18 DE MAYO · Págs. 108-118</span>
+  </div>
+
+  <!-- 1. ACTITUDES Y CONCEPTOS CLAVE -->
+  <div class="section-title">1 · Conceptos clave (pág. 108)</div>
+
+  <div class="def-card">
+    <h3>Actitudes ciudadanas</h3>
+    <p>Conjunto de <strong>valores, disposiciones y comportamientos</strong> que orientan la participación responsable, respetuosa y comprometida de las personas en la vida democrática y social.</p>
+  </div>
+  <div class="def-card">
+    <h3>Competencias ciudadanas</h3>
+    <p>Habilidades <strong>cognitivas y emocionales</strong> mediante las cuales las personas actúan correctamente y contribuyen a una sociedad mejor. Abarcan: democracia, paz, convivencia, participación, responsabilidad, pluralidad, identidad de género, cultura ambiental, sexualidad, salud y derechos humanos.</p>
+  </div>
+  <div class="def-card">
+    <h3>Deliberación</h3>
+    <p>Proceso colectivo que integra <strong>reflexión, discusión y toma de decisiones</strong>. Quienes participan se informan y consideran las razones a favor y en contra, orientados por el bien común.</p>
+    <p class="example">Ej.: La Asamblea Legislativa (Diputados) para aprobar o improbar un proyecto de ley.</p>
+  </div>
+  <div class="def-card">
+    <h3>Liderazgo democrático</h3>
+    <p>El líder toma decisiones <strong>consultando a sus seguidores</strong>. Oye las opiniones pero asume la responsabilidad de la decisión. Propicia la participación de colaboradores para contar con mayor información.</p>
+  </div>
+  <div class="def-card">
+    <h3>Negociación colaborativa</h3>
+    <p>Proceso mediante el cual dos o más partes <strong>intercambian información a lo largo de un período</strong> para lograr un acuerdo en que todas sean beneficiadas. Las partes pueden tener intereses comunes, diferentes u opuestos.</p>
+  </div>
+  <div class="def-card">
+    <h3>Prácticas ciudadanas</h3>
+    <p>Actitudes que se manifiestan por acciones que <strong>benefician a la sociedad y a la Patria</strong>. Son una obligación individual y colectiva porque ponen en juego la vida y perpetuidad de la democracia. Se debe privilegiar el diálogo, la concertación, el consenso, la negociación y la paz.</p>
+  </div>
+
+  <!-- 2. ACTITUDES DEMOCRÁTICAS p.109 -->
+  <div class="section-title">2 · Actitudes y prácticas democráticas (pág. 109)</div>
+
+  <div class="def-card" style="border-left-color: var(--accent2);">
+    <h3 style="color:var(--accent2)">1. Libertad</h3>
+    <p>Derecho <em>inalienable</em> (no puede ser cedido, transferido ni quitado). Es un derecho inherente al ser humano. Es sinónimo de <strong>autonomía, pero con responsabilidad</strong>.</p>
+    <ul class="blist" style="margin-top:8px">
+      <li>Libre albedrío = libre elección → todo derecho implica una obligación.</li>
+      <li>Ejercer la libertad respetando la libertad de los demás.</li>
+      <li>Desechar toda forma de esclavitud.</li>
+      <li>La libertad implica responsabilidades políticas, económicas, sociales y culturales.</li>
+    </ul>
+  </div>
+  <div class="def-card" style="border-left-color: var(--accent2);">
+    <h3 style="color:var(--accent2)">2. Respeto a los derechos humanos, la ley y las normas</h3>
+    <p>El respeto es la <strong>base fundamental</strong> de la convivencia sana y pacífica. Para practicarlo se requiere tener noción clara de los derechos fundamentales de cada persona, destacando en primer lugar el <strong>derecho a la vida</strong>.</p>
+  </div>
+
+  <!-- 3. DERECHOS HUMANOS p.110 -->
+  <div class="section-title">3 · Derechos Humanos (pág. 110)</div>
+  <p style="color:var(--muted); font-size:14px; margin-bottom:14px;">Son inseparables de la condición humana. Rigen los espacios de convivencia entre el individuo y la sociedad, así como la institucionalidad del Estado. Se definen en <strong>3 generaciones</strong>:</p>
+
+  <div style="overflow-x:auto">
+  <table class="nice-table">
+    <thead><tr><th>Generación</th><th>Definición</th><th>Ejemplos destacados</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="gen">Primera<br><small style="font-weight:400;color:var(--muted)">(Civiles y políticos)</small></td>
+        <td>Asociada a libertad e igualdad. Se relacionan con derechos civiles y políticos. Se imponen al Estado.</td>
+        <td>Derecho a la vida, libertad personal, libertad de expresión, libertad de pensamiento y religión, derecho al voto y a elegir autoridades, igualdad ante la ley, debido proceso y defensa legal, reunión y asociación.</td>
+      </tr>
+      <tr>
+        <td class="gen">Segunda<br><small style="font-weight:400;color:var(--muted)">(Sociales, económicos, culturales)</small></td>
+        <td>El Estado tiene la obligación de procurar mejores condiciones de vida.</td>
+        <td>Derecho al trabajo, salario justo, descanso y vacaciones, seguridad social, vivienda digna, salud, educación, ambiente sano, cooperación internacional.</td>
+      </tr>
+      <tr>
+        <td class="gen">Tercera<br><small style="font-weight:400;color:var(--muted)">(Solidaridad)</small></td>
+        <td>Vinculada a la solidaridad entre los pueblos, relacionados con la paz, el ambiente y el desarrollo.</td>
+        <td>Derecho a la paz, al desarrollo, autodeterminación de los pueblos, patrimonio común de la humanidad, identidad cultural, calidad de vida, cooperación internacional.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- 4. NORMAS p.111 -->
+  <div class="section-title">4 · Las Normas (pág. 111)</div>
+
+  <div class="grid2">
+    <div class="def-card">
+      <h3>Normas morales</h3>
+      <p>Conductas que se deben practicar según la conciencia. Faltar a una = reproche moral. Se basan en <strong>principios religiosos</strong>.</p>
+    </div>
+    <div class="def-card">
+      <h3>Normas de trato social</h3>
+      <p>Facilitan y hacen agradable la convivencia. Representan usos, costumbres y convencionalismo. Por ejemplo: <strong>decoro, cortesía, buena educación</strong>.</p>
+    </div>
+  </div>
+
+  <div class="def-card" style="border-left-color:var(--accent3)">
+    <h3 style="color:var(--accent3)">Normas jurídicas</h3>
+    <p>Conductas <strong>imperativas y coercitivas</strong> que regulan las acciones de las personas para un ordenamiento justo y convivencia en paz.</p>
+    <div class="hbox" style="margin-top:10px; background:#1a0f0f; border-color:var(--accent3)">
+      <div class="hbox-title" style="color:var(--accent3)">⚖️ La Ley</div>
+      <p style="font-size:13.5px">Precepto dictado por la suprema autoridad. Son elaboradas, discutidas, aprobadas y modificadas por la <strong>Asamblea Legislativa</strong>. El respeto a la ley es el principio fundamental de la democracia.</p>
+    </div>
+    <div style="margin-top:14px">
+      <strong style="color:var(--accent); font-size:14px">Pirámide de Kelsen:</strong>
+      <div class="pyramid" style="margin-top:10px">
+        <div class="pyr-level" style="background:var(--accent); width:180px; font-size:12px">1. Constitución Política<br><small>(Máxima autoridad)</small></div>
+        <div class="pyr-level" style="background:#c8921a; width:240px; font-size:12px">2. Tratados internacionales y leyes</div>
+        <div class="pyr-level" style="background:#a07515; width:300px; font-size:12px">3. Reglamentos y decretos ejecutivos</div>
+        <div class="pyr-level" style="background:#7a5a10; color:#ddd; width:360px; font-size:12px">4. Normas inferiores (acuerdos, circulares, resoluciones…)</div>
+      </div>
+      <p style="font-size:13px; color:var(--muted); margin-top:8px">⚠️ Ninguna norma inferior puede contradecir a una superior.</p>
+    </div>
+  </div>
+
+  <!-- 5. IGUALDAD REAL p.116 -->
+  <div class="section-title">5 · Búsqueda de la igualdad real (pág. 116)</div>
+  <div class="def-card">
+    <h3>Igualdad real</h3>
+    <p>Los seres humanos deben tener la misma posibilidad de disfrutar los derechos que la sociedad y las leyes les otorgan, sin distinción de nacionalidad, etnia, creencias religiosas, políticas, preferencia sexual, género, condición socioeconómica u otra.</p>
+    <p style="margin-top:8px">La igualdad trasciende las fronteras: <strong>todos los pueblos merecen y poseen los mismos derechos y oportunidades</strong> para lograr su organización.</p>
+  </div>
+  <div class="hbox">
+    <div class="hbox-title">📜 Constitución Política de Costa Rica</div>
+    <ul class="blist">
+      <li><strong>Art. 23:</strong> Todas las personas tienen derecho a participar en la dirección de asuntos públicos, votar y ser elegidos en condiciones de igualdad.</li>
+      <li><strong>Art. 33:</strong> Toda persona es igual ante la ley y no podrá practicarse discriminación contraria a la dignidad humana.</li>
+      <li><strong>Art. 24:</strong> Todas las personas son iguales ante la ley. En consecuencia, tienen derecho a igual protección de la ley, sin discriminación.</li>
+    </ul>
+  </div>
+
+  <!-- 6. DIÁLOGO Y NEGOCIACIÓN p.117 -->
+  <div class="section-title">6 · Manejo de conflictos (pág. 117)</div>
+  <div class="def-card" style="border-left-color:var(--accent2)">
+    <h3 style="color:var(--accent2)">Aprecio por el diálogo</h3>
+    <p><strong>Diálogo:</strong> Competencia que permite el intercambio de comunicación con respeto y atención. Es la condición necesaria para la resolución o manejo pacífico de conflictos.</p>
+  </div>
+  <div class="def-card">
+    <h3>1. Negociación</h3>
+    <p>En un conflicto entre dos o más personas se llega a una solución pacífica <strong>sin la intervención de un tercero</strong>. La solución debe tomar en cuenta los intereses de las partes.</p>
+    <ul class="blist" style="margin-top:6px">
+      <li>Dialogar únicamente sobre el problema.</li>
+      <li>No hacer juicios de valor, ni atacarse mutuamente.</li>
+    </ul>
+    <p class="example">Ej.: El presidente y los representantes sindicales o huelgas se reúnen.</p>
+  </div>
+
+  <!-- 7. MEDIACIÓN, CONCILIACIÓN, ARBITRAJE p.118 -->
+  <div class="section-title">7 · Mecanismos de resolución (pág. 118)</div>
+  <div class="def-card">
+    <h3>2. Mediación</h3>
+    <p>Dos personas no se ponen de acuerdo y es necesaria <strong>una persona que medie entre los dos</strong>. Plantea alternativas de acuerdo con la opinión de las partes. Su función es facilitar la comunicación — actúa como <strong>persona neutral o imparcial, no como autoridad</strong>.</p>
+  </div>
+  <div class="def-card">
+    <h3>3. Conciliación</h3>
+    <p>Las partes en conflicto acuden a un tercero para que les ayude a solucionar el problema. El conciliador escucha a las partes y propone una solución. Las partes son <strong>libres de aceptar, rechazar o modificar</strong> los aspectos propuestos. <strong>No es juez, ni actúa como autoridad.</strong></p>
+  </div>
+  <div class="def-card" style="border-left-color:var(--accent3)">
+    <h3 style="color:var(--accent3)">4. Arbitraje</h3>
+    <p>Dos personas en conflicto buscan a una tercera persona <strong>neutral que sirva de árbitro</strong> y resolverá definitivamente el conflicto. La resolución se llama <strong>laudo o sentencia arbitral</strong> y ambas partes <strong>deben acatarla obligatoriamente</strong>. Si no se llega a un acuerdo en la conciliación, se puede ir a un arbitraje o a un proceso judicial.</p>
+  </div>
+
+  <div class="hbox">
+    <div class="hbox-title">📌 Tarea práctica (Trabajo Práctico p.111 / 118)</div>
+    <ul class="blist">
+      <li>Establece un ejemplo de una Norma Social, una Moral y una Jurídica.</li>
+      <li>Correspondencia: Normas de trato social = conductas imperativas y coercitivas (obligatorias).</li>
+      <li>Redacta un ejemplo de negociación.</li>
+    </ul>
+  </div>
+
+</div><!-- end summary -->
+
+<!-- ═══════════════ QUIZ PAGE ═══════════════ -->
+<div id="quiz" class="page">
+  <div class="hero">
+    <h1>Práctica de Examen</h1>
+    <p>20 preguntas · Pág. 108–118</p>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+  <div class="q-counter" id="q-counter">Pregunta 1 de 20</div>
+
+  <div id="quiz-area">
+    <div class="question-card">
+      <div class="question-text" id="q-text"></div>
+      <div class="options" id="q-options"></div>
+      <div class="feedback" id="q-feedback"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">Siguiente →</button>
+    </div>
+  </div>
+
+  <div class="score-card" id="score-card">
+    <div class="score-big" id="score-display"></div>
+    <div class="score-label" id="score-label"></div>
+    <div class="score-msg" id="score-msg"></div>
+    <button class="restart-btn" onclick="restartQuiz()">🔄 Repetir práctica</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "¿Cuál es la definición correcta de 'Actitudes ciudadanas'?",
+    opts: [
+      "Habilidades cognitivas que permiten participar en política.",
+      "Conjunto de valores, disposiciones y comportamientos que orientan la participación responsable en la vida democrática.",
+      "Proceso colectivo de reflexión y toma de decisiones.",
+      "Conductas imperativas que regulan las acciones de las personas."
+    ],
+    ans: 1,
+    exp: "Las actitudes ciudadanas son el conjunto de valores, disposiciones y comportamientos que orientan la participación responsable, respetuosa y comprometida en la vida democrática y social."
+  },
+  {
+    q: "La 'Deliberación' como práctica democrática implica:",
+    opts: [
+      "Votar en secreto sin discutir con nadie.",
+      "Un proceso colectivo que integra reflexión, discusión y toma de decisiones orientadas al bien común.",
+      "Que el líder tome decisiones por su cuenta sin consultar.",
+      "Resolver conflictos mediante un árbitro neutral."
+    ],
+    ans: 1,
+    exp: "La deliberación es un proceso colectivo que integra reflexión, discusión y toma de decisiones. Quienes participan se informan y consideran razones a favor y en contra, orientados por el bien común. Ej.: La Asamblea Legislativa para aprobar un proyecto de ley."
+  },
+  {
+    q: "El 'Liderazgo democrático' se caracteriza por:",
+    opts: [
+      "Imponer decisiones sin escuchar a nadie.",
+      "Consultar a los seguidores pero asumir la responsabilidad de la decisión.",
+      "Dejar que el grupo decida sin ninguna guía.",
+      "Contratar un árbitro para resolver conflictos."
+    ],
+    ans: 1,
+    exp: "En el liderazgo democrático, la persona líder toma decisiones consultando a sus seguidores, oye las opiniones, pero él toma la responsabilidad de la decisión para mantener el control de la situación."
+  },
+  {
+    q: "Las 'Competencias ciudadanas' abarcan áreas como:",
+    opts: [
+      "Solo democracia y paz.",
+      "Únicamente responsabilidad y participación.",
+      "Democracia, paz, convivencia, participación, responsabilidad, pluralidad, identidad de género, cultura ambiental, sexualidad, salud y derechos humanos.",
+      "Solo derechos humanos y leyes."
+    ],
+    ans: 2,
+    exp: "Las competencias ciudadanas son habilidades cognitivas y emocionales que abarcan múltiples áreas: democracia, paz, convivencia, participación, responsabilidad, pluralidad, identidad de género, valoración de las diferencias, cultura ambiental, sexualidad, salud y derechos humanos."
+  },
+  {
+    q: "La libertad como actitud democrática se define como:",
+    opts: [
+      "Un derecho que puede cederse o transferirse a otra persona.",
+      "Un derecho inalienable inherente al ser humano, sinónimo de autonomía con responsabilidad.",
+      "La capacidad de hacer todo lo que uno quiera sin límites.",
+      "Un privilegio otorgado por el Estado."
+    ],
+    ans: 1,
+    exp: "La libertad es un derecho inalienable (que no puede ser cedido, transferido ni quitado) porque es propio y esencial de la persona. Es sinónimo de autonomía, pero con responsabilidad."
+  },
+  {
+    q: "Los Derechos Humanos de PRIMERA generación están asociados a:",
+    opts: [
+      "La solidaridad entre pueblos y el medio ambiente.",
+      "El trabajo, salario justo y vivienda digna.",
+      "La libertad, igualdad, derechos civiles y políticos.",
+      "La paz y el desarrollo internacional."
+    ],
+    ans: 2,
+    exp: "Los derechos de primera generación están asociados a los conceptos de libertad e igualdad y se relacionan con derechos civiles y políticos. Ej.: derecho a la vida, libertad de expresión, derecho al voto, igualdad ante la ley."
+  },
+  {
+    q: "¿Cuál es un ejemplo de derecho de SEGUNDA generación?",
+    opts: [
+      "Derecho al voto y a elegir autoridades.",
+      "Derecho a la autodeterminación de los pueblos.",
+      "Derecho a la paz y al ambiente sano.",
+      "Derecho al trabajo, salario justo y vivienda digna."
+    ],
+    ans: 3,
+    exp: "Los derechos de segunda generación son sociales, económicos y culturales. El Estado tiene la obligación de procurar mejores condiciones de vida. Incluyen: trabajo, salario justo, descanso y vacaciones, seguridad social, vivienda digna, salud, educación."
+  },
+  {
+    q: "Los derechos de TERCERA generación están vinculados a:",
+    opts: [
+      "La libertad de expresión y el voto.",
+      "La solidaridad entre pueblos: paz, ambiente, desarrollo.",
+      "El trabajo y la seguridad social.",
+      "La igualdad ante la ley únicamente."
+    ],
+    ans: 1,
+    exp: "Los derechos de tercera generación están vinculados a la solidaridad entre los pueblos, relacionados con la paz, el ambiente y el desarrollo. Incluyen: derecho a la paz, al desarrollo, autodeterminación, patrimonio cultural de la humanidad."
+  },
+  {
+    q: "Las normas MORALES se caracterizan porque:",
+    opts: [
+      "Son coercitivas e imperativas, y el Estado las impone.",
+      "Se basan en principios religiosos y su incumplimiento genera un reproche moral.",
+      "Regulan solo la convivencia social como la cortesía.",
+      "Son leyes aprobadas por la Asamblea Legislativa."
+    ],
+    ans: 1,
+    exp: "Las normas morales son conductas que se deben practicar según la conciencia. Faltar a una de estas normas constituye un reproche moral. Generalmente estas normas se basan en principios religiosos."
+  },
+  {
+    q: "Las normas de TRATO SOCIAL se refieren a:",
+    opts: [
+      "Leyes que el Estado impone obligatoriamente.",
+      "Principios religiosos que guían la conciencia.",
+      "Usos, costumbres y convencionalismo que facilitan la convivencia, como el decoro y la cortesía.",
+      "Tratados internacionales aprobados por Costa Rica."
+    ],
+    ans: 2,
+    exp: "Las normas de trato social tienen como función facilitar y hacer más agradable la convivencia humana. Representan usos, costumbres y convencionalismo que se imponen. Por ejemplo: decoro, cortesía o buena educación."
+  },
+  {
+    q: "Las normas JURÍDICAS son:",
+    opts: [
+      "Sugerencias voluntarias de la sociedad.",
+      "Conductas imperativas y coercitivas que regulan las acciones de las personas para lograr una convivencia justa.",
+      "Principios basados únicamente en la moral religiosa.",
+      "Normas de buena educación y cortesía."
+    ],
+    ans: 1,
+    exp: "Las normas jurídicas son normas de conducta imperativas y coercitivas que regulan las acciones de las personas para lograr un ordenamiento justo en una convivencia en paz."
+  },
+  {
+    q: "En la Pirámide de Kelsen de Costa Rica, ¿cuál es la norma de mayor jerarquía?",
+    opts: [
+      "Los tratados internacionales.",
+      "Los reglamentos y decretos ejecutivos.",
+      "La Constitución Política (máxima autoridad).",
+      "Las normas inferiores como circulares y resoluciones."
+    ],
+    ans: 2,
+    exp: "La Pirámide de Kelsen establece: 1° Constitución Política (máxima autoridad), 2° Tratados internacionales y leyes, 3° Reglamentos y decretos ejecutivos, 4° Normas inferiores. Ninguna norma inferior puede contradecir a una superior."
+  },
+  {
+    q: "La 'igualdad real' según el tema de búsqueda de igualdad real significa:",
+    opts: [
+      "Que todos deben tener exactamente los mismos bienes materiales.",
+      "Que todos los seres humanos deben tener la misma posibilidad de disfrutar los derechos, sin distinción de ningún tipo.",
+      "Que el Estado puede discriminar según la condición socioeconómica.",
+      "Que solo los ciudadanos costarricenses tienen igualdad ante la ley."
+    ],
+    ans: 1,
+    exp: "La igualdad reconoce que los seres humanos deben tener la misma posibilidad de disfrutar los derechos que la sociedad y las leyes les otorgan, sin distinción de nacionalidad, etnia, creencias religiosas, políticas, preferencia sexual, género, condición socioeconómica u otra."
+  },
+  {
+    q: "El Artículo 33 de la Constitución Política de Costa Rica establece que:",
+    opts: [
+      "Todas las personas tienen derecho al voto.",
+      "Toda persona es igual ante la ley y no podrá practicarse discriminación contraria a la dignidad humana.",
+      "El Estado garantiza vivienda y educación gratuita.",
+      "Los ciudadanos pueden elegir a sus representantes en condiciones de igualdad."
+    ],
+    ans: 1,
+    exp: "El Art. 33 establece: 'Toda persona es igual ante la ley y no podrá practicarse discriminación alguna contraria a la dignidad humana.'"
+  },
+  {
+    q: "La NEGOCIACIÓN como mecanismo de resolución de conflictos se caracteriza porque:",
+    opts: [
+      "Requiere obligatoriamente la presencia de un árbitro que decida.",
+      "Las partes llegan a una solución pacífica SIN la intervención de un tercero.",
+      "El conciliador propone una solución que las partes deben aceptar.",
+      "Siempre termina con una sentencia arbitral de acatamiento obligatorio."
+    ],
+    ans: 1,
+    exp: "En la negociación, en un conflicto entre dos o más personas, se llega a una solución pacífica sin la intervención de un tercero. Debe dialogarse sobre el problema, sin juicios de valor ni ataques mutuos."
+  },
+  {
+    q: "¿Cuál es la función principal del MEDIADOR en un conflicto?",
+    opts: [
+      "Imponer una solución obligatoria para ambas partes.",
+      "Actuar como juez y dictar sentencia.",
+      "Facilitar la comunicación entre las partes de forma neutral e imparcial, sin actuar como autoridad.",
+      "Proponer una solución específica que las partes deben aceptar o rechazar."
+    ],
+    ans: 2,
+    exp: "La mediación es cuando dos personas no se ponen de acuerdo y es necesaria una persona que medie entre los dos. Su función es facilitar la comunicación entre las partes, actuando como persona neutral o imparcial. No es juez ni actúa como autoridad."
+  },
+  {
+    q: "En la CONCILIACIÓN, ¿qué puede hacer el conciliador?",
+    opts: [
+      "Dictar una sentencia que ambas partes deben acatar obligatoriamente.",
+      "Proponer una solución, pero las partes son libres de aceptarla, rechazarla o modificarla.",
+      "Solo escuchar sin proponer nada.",
+      "Actuar exactamente igual que un árbitro."
+    ],
+    ans: 1,
+    exp: "En la conciliación, las partes en conflicto acuden a un tercero para que les ayude a solucionar el problema. El conciliador escucha a las partes y luego propone una posible solución. Las partes son libres de aceptar, rechazar o modificar los aspectos propuestos. No es juez ni actúa como autoridad."
+  },
+  {
+    q: "El ARBITRAJE se diferencia de la conciliación porque:",
+    opts: [
+      "El árbitro no puede proponer soluciones.",
+      "La resolución (laudo o sentencia arbitral) es de acatamiento OBLIGATORIO para ambas partes.",
+      "Las partes no necesitan un tercero.",
+      "Solo se usa en conflictos internacionales."
+    ],
+    ans: 1,
+    exp: "En el arbitraje, dos personas en conflicto buscan a una tercera persona neutral que sirva de árbitro y resolverá definitivamente el conflicto. La resolución se llama laudo o sentencia arbitral y ambas partes deben acatarla obligatoriamente."
+  },
+  {
+    q: "El DIÁLOGO como competencia democrática es importante porque:",
+    opts: [
+      "Permite evitar completamente todos los conflictos.",
+      "Es la condición necesaria para la resolución o manejo pacífico de conflictos.",
+      "Reemplaza la necesidad de leyes y normas.",
+      "Permite que una persona imponga su criterio sobre los demás."
+    ],
+    ans: 1,
+    exp: "El diálogo es la competencia que permite el intercambio de comunicación con respeto y atención. Es la condición necesaria para la resolución o manejo pacífico de conflictos."
+  },
+  {
+    q: "Las 'Prácticas ciudadanas' son importantes porque:",
+    opts: [
+      "Son solo una obligación individual, no colectiva.",
+      "Solo benefician a los gobernantes.",
+      "Son una obligación individual Y colectiva porque ponen en juego la vida y perpetuidad de la democracia.",
+      "Solo se aplican en tiempos de elecciones."
+    ],
+    ans: 2,
+    exp: "Las prácticas ciudadanas constituyen una obligación individual y colectiva porque ponen en juego la vida y la perpetuidad de la democracia. En ellas se deben privilegiar el diálogo, la concertación, el consenso, la negociación y la paz como herramientas para asumir los conflictos."
+  }
+];
+
+let current = 0, score = 0, answered = false;
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function loadQuestion() {
+  if (current >= questions.length) { showScore(); return; }
+  const q = questions[current];
+  answered = false;
+  document.getElementById('q-counter').textContent = `Pregunta ${current + 1} de ${questions.length}`;
+  document.getElementById('progress').style.width = `${(current / questions.length) * 100}%`;
+  document.getElementById('q-text').textContent = q.q;
+  const optDiv = document.getElementById('q-options');
+  optDiv.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(i, btn);
+    optDiv.appendChild(btn);
+  });
+  document.getElementById('q-feedback').className = 'feedback';
+  document.getElementById('q-feedback').textContent = '';
+  document.getElementById('next-btn').style.display = 'none';
+}
+
+function selectAnswer(chosen, btn) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const buttons = document.querySelectorAll('.option-btn');
+  buttons.forEach(b => b.disabled = true);
+  if (chosen === q.ans) {
+    btn.classList.add('correct');
+    score++;
+    const fb = document.getElementById('q-feedback');
+    fb.className = 'feedback correct';
+    fb.textContent = '✅ ¡Correcto! ' + q.exp;
+  } else {
+    btn.classList.add('wrong');
+    buttons[q.ans].classList.add('correct');
+    const fb = document.getElementById('q-feedback');
+    fb.className = 'feedback wrong';
+    fb.textContent = '❌ Incorrecto. ' + q.exp;
+  }
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) { showScore(); return; }
+  loadQuestion();
+}
+
+function showScore() {
+  document.getElementById('quiz-area').style.display = 'none';
+  document.getElementById('score-card').style.display = 'block';
+  document.getElementById('progress').style.width = '100%';
+  const pct = Math.round((score / questions.length) * 100);
+  document.getElementById('score-display').textContent = `${score}/${questions.length}`;
+  document.getElementById('score-label').textContent = `${pct}% de respuestas correctas`;
+  let msg = '';
+  if (pct >= 90) msg = '🏆 ¡Excelente! ¡Estás más que listo para el examen!';
+  else if (pct >= 70) msg = '👍 ¡Bien! Repasa los conceptos donde fallaste.';
+  else if (pct >= 50) msg = '📖 Necesitas repasar más. ¡Vuelve al resumen!';
+  else msg = '💪 Sigue estudiando el resumen y vuelve a intentarlo.';
+  document.getElementById('score-msg').textContent = msg;
+}
+
+function restartQuiz() {
+  current = 0; score = 0; answered = false;
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('score-card').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
